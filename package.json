@@ -1,0 +1,51 @@
+{
+  "name": "lock",
+  "description": "Implements Lock and RWLock synchronization primitives.",
+  "version": "1.0.0",
+  "repository": "github:rocicorp/lock",
+  "license": "BSL-1.1",
+  "scripts": {
+    "test": "web-test-runner",
+    "test:watch": "web-test-runner --watch",
+    "format": "prettier --write 'src/**/*.{js,jsx,json,ts,tsx,html,css,md}' '*.{cjs,js,jsx,json,ts,tsx,html,css,md}'",
+    "check-format": "prettier --check 'src/**/*.{js,jsx,json,ts,tsx,html,css,md}' '*.{cjs,js,jsx,json,ts,tsx,html,css,md}'",
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx src/",
+    "build-dts": "rm -rf out/.dts/ && tsc --emitDeclarationOnly --outDir out/.dts/ && rollup --config rollup.config.js && rm -rf out/.dts",
+    "build-mjs": "esbuild --bundle --target=es2018 --outfile=out/lock.mjs --format=esm src/lock.ts",
+    "build-cjs": "esbuild --bundle --target=es2018 --outfile=out/lock.js --format=cjs src/lock.ts",
+    "build-min-mjs": "esbuild --bundle --target=es2018 --outfile=out/lock.min.mjs --format=esm src/lock.ts --minify --mangle-props=^_",
+    "build": "rm -rf out && npm run build-dts && npm run build-mjs && npm run build-cjs && npm run build-min-mjs",
+    "prepack": "npm run lint && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@esm-bundle/chai": "^4.3.4",
+    "@types/mocha": "^9.0.0",
+    "@types/sinon": "^10.0.6",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "@web/dev-server": "0.1.29",
+    "@web/dev-server-esbuild": "^0.2.16",
+    "@web/test-runner": "^0.13.25",
+    "@web/test-runner-playwright": "^0.8.8",
+    "esbuild": "^0.14.18",
+    "eslint": "^8.3.0",
+    "prettier": "^2.5.1",
+    "rollup": "^2.64.0",
+    "rollup-plugin-dts": "^4.1.0",
+    "sinon": "^12.0.1",
+    "typescript": "^4.5.4"
+  },
+  "main": "out/lock.js",
+  "module": "out/lock.mjs",
+  "types": "out/lock.d.ts",
+  "exports": {
+    "module": "./out/lock.mjs",
+    "require": "./out/lock.js",
+    "default": "./out/lock.mjs"
+  },
+  "files": [
+    "out/lock.d.ts",
+    "out/lock.js",
+    "out/lock.mjs"
+  ]
+}
