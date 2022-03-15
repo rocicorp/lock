@@ -1,7 +1,21 @@
-import {expect} from '@esm-bundle/chai';
-import {RWLock} from './lock';
-import {sleep} from './sleep';
+import {expect} from 'chai';
 import {SinonFakeTimers, useFakeTimers} from 'sinon';
+import {RWLock} from './lock.js';
+
+/**
+ * Creates a promise that resolves after [[ms]] milliseconds. Note that if you
+ * pass in `0` no `setTimeout` is used and the promise resolves immediately. In
+ * other words no macro task is used in that case.
+ */
+function sleep(ms: number): Promise<void> {
+  if (ms === 0) {
+    return Promise.resolve();
+  }
+
+  return new Promise(resolve => {
+    setTimeout(() => resolve(), ms);
+  });
+}
 
 let clock: SinonFakeTimers;
 setup(() => {

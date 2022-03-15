@@ -1,4 +1,4 @@
-import {resolver} from './resolver';
+import {resolver} from './resolver.js';
 
 export class Lock {
   private _lockP: Promise<void> | null = null;
