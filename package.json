@@ -1,7 +1,7 @@
 {
   "name": "@rocicorp/lock",
   "description": "Implements Lock and RWLock synchronization primitives.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": "github:rocicorp/lock",
   "license": "Apache-2.0",
   "engines": {
@@ -37,5 +37,8 @@
   "files": [
     "out/*",
     "!out/*.test.*"
-  ]
+  ],
+  "dependencies": {
+    "@rocicorp/resolver": "^1.0.0"
+  }
 }
