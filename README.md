@@ -1,3 +1,75 @@
 # Lock
 
-Provides `Lock` and `RwLock` synchronization primitives for protecting in-memory state across multiple tasks and/or microtasks.
+Provides `Lock` and `RWLock` (read write lock) synchronization primitives for
+protecting in-memory state across multiple tasks and/or microtasks.
+
+# Installation
+
+```
+npm install @rocicorp/lock
+```
+
+# Usage
+
+`Lock` is a mutex that can be used to synchronize access to a shared resource.
+
+```ts
+import {Lock} from '@rocicorp/lock';
+
+const lock = new Lock();
+
+async function f(n) {
+  const v = await lock.withLock(async () => {
+    await sleep(1000);
+    return n;
+  });
+  console.log(n);
+}
+
+void f(1);
+void f(2);
+// prints 1 at t=1000
+// prints 2 at t=2000
+```
+
+`RWLock` is a read write lock. There can be mutlipe readers at the same time but only one writer at the same time.
+
+```js
+import {RWLock} from '@rocicorp/lock';
+
+const rwLock = new RWLock();
+
+async function read(n) {
+  const v = await lock.withRead(async () => {
+    await sleep(1000);
+    return n;
+  });
+  console.log('read', n);
+}
+
+async function write(n) {
+  const v = await lock.withWrite(async () => {
+    await sleep(1000);
+    return n;
+  });
+  console.log('write', n);
+}
+
+void read(1);
+void write(2);
+void read(3);
+// prints read 1 at t=1000
+// prints read 3 at t=1000
+// prints write 2 at t=2000
+```
+
+Both `Lock` and `RWLock` expose non "with" methods (`lock`, `read` and `write`). These returns a promise to a release function that resolves when the lock is acquired. This is useful when you cannot wrap your code in a function like the examples above. When using these For example:
+
+```js
+const lock = new Lock();
+
+const release = await lock.lock();
+// here we got the lock
+// do something
+release();
+```
