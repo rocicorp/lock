@@ -1,5 +1,5 @@
 {
-  "name": "lock",
+  "name": "@rocicorp/lock",
   "description": "Implements Lock and RWLock synchronization primitives.",
   "version": "1.0.0",
   "repository": "github:rocicorp/lock",
@@ -32,8 +32,7 @@
   "type": "module",
   "types": "out/lock.d.ts",
   "exports": {
-    ".": "./out/lock.js",
-    "./resolver": "./out/resolver.js"
+    ".": "./out/lock.js"
   },
   "files": [
     "out/*",
