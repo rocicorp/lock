@@ -16,6 +16,9 @@
     "build": "rm -rf out && tsc",
     "prepack": "npm run lint && npm run test "
   },
+  "dependencies": {
+    "@rocicorp/resolver": "^1.0.1"
+  },
   "devDependencies": {
     "@types/chai": "^4.3.6",
     "@types/mocha": "^10.0.1",
@@ -38,8 +41,5 @@
   "files": [
     "out/*",
     "!out/*.test.*"
-  ],
-  "dependencies": {
-    "@rocicorp/resolver": "^1.0.0"
-  }
+  ]
 }
