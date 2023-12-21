@@ -84,29 +84,47 @@ async function run<R>(
 export class RWLockMap {
   private _locks = new Map<string, RWLock>();
 
+  private getLock(key: string) {
+    const lock = this._locks.get(key);
+    if (lock) return lock;
+    const newLock = new RWLock();
+    this._locks.set(key, newLock);
+    return newLock;
+  }
+
+  private deleteLock(key: string) {
+    this._locks.delete(key);
+  }
+
+  async read(key: string): Promise<() => void> {
+    const lock = this.getLock(key);
+    const release = await lock.read();
+    return () => {
+      release();
+      if (lock.unlocked) this.deleteLock(key);
+    };
+  }
+
   async withRead<R>(key: string, f: () => R | Promise<R>): Promise<R> {
-    let lock = this._locks.get(key);
-    if (!lock) {
-      lock = new RWLock();
-      this._locks.set(key, lock);
-    }
-
+    const lock = this.getLock(key);
     const result = await lock.withRead(f);
-    if (lock.unlocked) this._locks.delete(key);
-
+    if (lock.unlocked) this.deleteLock(key);
     return result;
   }
 
+  async write(key: string): Promise<() => void> {
+    const lock = this.getLock(key);
+    const release = await lock.write();
+    return () => {
+      release();
+      if (lock.unlocked) this.deleteLock(key);
+    };
+  }
+
   async withWrite<R>(key: string, f: () => R | Promise<R>): Promise<R> {
-    let lock = this._locks.get(key);
-    if (!lock) {
-      lock = new RWLock();
-      this._locks.set(key, lock);
-    }
-
+    const lock = this.getLock(key);
     const result = await lock.withWrite(f);
-    if (lock.unlocked) this._locks.delete(key);
-
+    if (lock.unlocked) this.deleteLock(key);
     return result;
   }
 }
