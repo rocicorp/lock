@@ -8,25 +8,35 @@ export class Lock {
     const {promise, resolve} = resolver();
     this._lockP = promise;
     await previous;
-    return resolve;
+    return () => {
+      if (this._lockP === promise) this._lockP = null;
+      resolve();
+    };
   }
 
   withLock<R>(f: () => R | Promise<R>): Promise<R> {
     return run(this.lock(), f);
+  }
+
+  get unlocked() {
+    return this._lockP === null;
   }
 }
 
 export class RWLock {
   private _lock = new Lock();
   private _writeP: Promise<void> | null = null;
-  private _readP: Promise<void>[] = [];
+  private _readP: Set<Promise<void>> = new Set();
 
   read(): Promise<() => void> {
     return this._lock.withLock(async () => {
       await this._writeP;
       const {promise, resolve} = resolver();
-      this._readP.push(promise);
-      return resolve;
+      this._readP.add(promise);
+      return () => {
+        this._readP.delete(promise);
+        resolve();
+      };
     });
   }
 
@@ -40,13 +50,22 @@ export class RWLock {
       await Promise.all(this._readP);
       const {promise, resolve} = resolver();
       this._writeP = promise;
-      this._readP = [];
-      return resolve;
+      this._readP.clear();
+      return () => {
+        if (this._writeP === promise) this._writeP = null;
+        resolve();
+      };
     });
   }
 
   withWrite<R>(f: () => R | Promise<R>): Promise<R> {
     return run(this.write(), f);
+  }
+
+  get unlocked() {
+    return (
+      this._lock.unlocked && this._writeP === null && this._readP.size === 0
+    );
   }
 }
 

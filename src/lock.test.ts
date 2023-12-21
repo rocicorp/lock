@@ -50,7 +50,9 @@ test('Multiple reads', async () => {
     release();
   })();
 
+  expect(lock.unlocked).to.equal(false);
   const [v1, v2, v3] = await Promise.all([r1, r2, r3]);
+  expect(lock.unlocked).to.equal(true);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -83,9 +85,11 @@ test('Multiple reads with sleep', async () => {
     release();
   })();
 
+  expect(lock.unlocked).to.equal(false);
   await clock.runAllAsync();
 
   const [v1, v2, v3] = await Promise.all([r1, r2, r3]);
+  expect(lock.unlocked).to.equal(true);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -122,9 +126,11 @@ test('Multiple write', async () => {
     release();
   })();
 
+  expect(lock.unlocked).to.equal(false);
   await clock.runAllAsync();
 
   const [v1, v2, v3] = await Promise.all([w1, w2, w3]);
+  expect(lock.unlocked).to.equal(true);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -161,9 +167,11 @@ test('Write then read', async () => {
     release();
   })();
 
+  expect(lock.unlocked).to.equal(false);
   await clock.runAllAsync();
 
   const [v1, v2, v3] = await Promise.all([w1, r2, r3]);
+  expect(lock.unlocked).to.equal(true);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -208,9 +216,11 @@ test('Reads then writes', async () => {
     return 4;
   })();
 
+  expect(lock.unlocked).to.equal(false);
   await clock.runAllAsync();
 
   const [v1, v2, v3, v4] = await Promise.all([r1, r2, w3, w4]);
+  expect(lock.unlocked).to.equal(true);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -257,9 +267,11 @@ test('Reads then writes (withRead)', async () => {
     return 4;
   });
 
+  expect(lock.unlocked).to.equal(false);
   await clock.runAllAsync();
 
   const [v1, v2, v3, v4] = await Promise.all([r1, r2, w3, w4]);
+  expect(lock.unlocked).to.equal(true);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
