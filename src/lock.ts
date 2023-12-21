@@ -80,3 +80,33 @@ async function run<R>(
     release();
   }
 }
+
+export class RWLockMap {
+  private _locks = new Map<string, RWLock>();
+
+  async withRead<R>(key: string, f: () => R | Promise<R>): Promise<R> {
+    let lock = this._locks.get(key);
+    if (!lock) {
+      lock = new RWLock();
+      this._locks.set(key, lock);
+    }
+
+    const result = await lock.withRead(f);
+    if (lock.unlocked) this._locks.delete(key);
+
+    return result;
+  }
+
+  async withWrite<R>(key: string, f: () => R | Promise<R>): Promise<R> {
+    let lock = this._locks.get(key);
+    if (!lock) {
+      lock = new RWLock();
+      this._locks.set(key, lock);
+    }
+
+    const result = await lock.withWrite(f);
+    if (lock.unlocked) this._locks.delete(key);
+
+    return result;
+  }
+}
