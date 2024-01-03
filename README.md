@@ -3,10 +3,12 @@
 Provides `Lock` and `RWLock` (read write lock) synchronization primitives for
 protecting in-memory state across multiple tasks and/or microtasks.
 
+This is a wholesale fork of [`@rocicorp/lock`](https://github.com/rocicorp/lock) but adds `RWLockMap` functionality.
+
 # Installation
 
 ```
-npm install @rocicorp/lock
+npm install @ccorcos/lock
 ```
 
 # Usage
@@ -14,7 +16,7 @@ npm install @rocicorp/lock
 `Lock` is a mutex that can be used to synchronize access to a shared resource.
 
 ```ts
-import {Lock} from '@rocicorp/lock';
+import {Lock} from '@ccorcos/lock';
 
 const lock = new Lock();
 
@@ -35,7 +37,7 @@ void f(2);
 `RWLock` is a read write lock. There can be mutlipe readers at the same time but only one writer at the same time.
 
 ```js
-import {RWLock} from '@rocicorp/lock';
+import {RWLock} from '@ccorcos/lock';
 
 const rwLock = new RWLock();
 
@@ -72,4 +74,20 @@ const release = await lock.lock();
 // here we got the lock
 // do something
 release();
+```
+
+`RWLockMap` will dynamically create and clean up locks keyed by a string.
+
+```js
+import {RWLockMap} from '@ccorcos/lock';
+
+const lockMap = new RWLockMap();
+const release1 = await lockMap.read("node1");
+const release2 = await lockMap.write("node2");
+const v3 = await lockMap.withRead("node3", async () => {
+  return 3;
+});
+const v4 = await lockMap.withWrite("node4", async () => {
+  return 4;
+});
 ```
