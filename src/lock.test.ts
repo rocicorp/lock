@@ -307,10 +307,11 @@ test('RWLockMap will cleanup locks.', async () => {
       log.push('r2b');
       return 2;
     });
-    const w3: Promise<void> = locks.withWrite(key, async () => {
+    const w3: Promise<number> = locks.withWrite(key, async () => {
       log.push('w3a');
       await sleep(4);
       log.push('w3b');
+      return -1;
     });
     const w4: Promise<number> = locks.withWrite(key, async () => {
       log.push('w4a');
@@ -323,11 +324,11 @@ test('RWLockMap will cleanup locks.', async () => {
     return {log, result};
   }
 
-  async function assertTest(args: {log: string[]; result: Promise<any[]>}) {
+  async function assertTest(args: {log: string[]; result: Promise<number[]>}) {
     const [v1, v2, v3, v4] = await args.result;
     expect(v1).to.equal(1);
     expect(v2).to.equal(2);
-    expect(v3).to.equal(undefined);
+    expect(v3).to.equal(-1);
     expect(v4).to.equal(4);
 
     expect(args.log).to.deep.equal([
