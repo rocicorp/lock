@@ -1,8 +1,8 @@
 {
-  "name": "@rocicorp/lock",
+  "name": "@ccorcos/lock",
   "description": "Implements Lock and RWLock synchronization primitives.",
   "version": "1.0.3",
-  "repository": "github:rocicorp/lock",
+  "repository": "github:ccorcos/lock",
   "license": "Apache-2.0",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
