@@ -18,8 +18,8 @@ export class Lock {
     return run(this.lock(), f);
   }
 
-  get unlocked() {
-    return this._lockP === null;
+  get locked() {
+    return this._lockP !== null;
   }
 }
 
@@ -62,10 +62,8 @@ export class RWLock {
     return run(this.write(), f);
   }
 
-  get unlocked() {
-    return (
-      this._lock.unlocked && this._writeP === null && this._readP.size === 0
-    );
+  get locked() {
+    return this._lock.locked || this._writeP !== null || this._readP.size > 0;
   }
 }
 
@@ -101,14 +99,14 @@ export class RWLockMap {
     const release = await lock.read();
     return () => {
       release();
-      if (lock.unlocked) this.deleteLock(key);
+      if (!lock.locked) this.deleteLock(key);
     };
   }
 
   async withRead<R>(key: string, f: () => R | Promise<R>): Promise<R> {
     const lock = this.getLock(key);
     const result = await lock.withRead(f);
-    if (lock.unlocked) this.deleteLock(key);
+    if (!lock.locked) this.deleteLock(key);
     return result;
   }
 
@@ -117,14 +115,14 @@ export class RWLockMap {
     const release = await lock.write();
     return () => {
       release();
-      if (lock.unlocked) this.deleteLock(key);
+      if (!lock.locked) this.deleteLock(key);
     };
   }
 
   async withWrite<R>(key: string, f: () => R | Promise<R>): Promise<R> {
     const lock = this.getLock(key);
     const result = await lock.withWrite(f);
-    if (lock.unlocked) this.deleteLock(key);
+    if (!lock.locked) this.deleteLock(key);
     return result;
   }
 }
