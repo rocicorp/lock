@@ -17,7 +17,7 @@
     "prepack": "npm run lint && npm run test "
   },
   "dependencies": {
-    "@rocicorp/resolver": "^1.0.1"
+    "@rocicorp/resolver": "^1.0.2"
   },
   "devDependencies": {
     "@types/chai": "^4.3.6",
@@ -35,6 +35,7 @@
   "type": "module",
   "types": "out/lock.d.ts",
   "module": "./out/lock.js",
+  "main": "./out/lock.js",
   "exports": {
     ".": "./out/lock.js"
   },
