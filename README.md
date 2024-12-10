@@ -73,3 +73,19 @@ const release = await lock.lock();
 // do something
 release();
 ```
+
+ `RWLockMap` will dynamically create and clean up locks keyed by a string.
+
+ ```js
+ import {RWLockMap} from '@rocicorp/lock';
+
+ const lockMap = new RWLockMap();
+ const release1 = await lockMap.read("node1");
+ const release2 = await lockMap.write("node2");
+ const v3 = await lockMap.withRead("node3", async () => {
+   return 3;
+ });
+ const v4 = await lockMap.withWrite("node4", async () => {
+   return 4;
+ });
+ ```

@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {SinonFakeTimers, useFakeTimers} from 'sinon';
-import {RWLock} from './lock.js';
+import {RWLock, RWLockMap} from './lock.js';
 
 /**
  * Creates a promise that resolves after [[ms]] milliseconds. Note that if you
@@ -50,7 +50,9 @@ test('Multiple reads', async () => {
     release();
   })();
 
+  expect(lock.locked).to.equal(true);
   const [v1, v2, v3] = await Promise.all([r1, r2, r3]);
+  expect(lock.locked).to.equal(false);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -83,9 +85,11 @@ test('Multiple reads with sleep', async () => {
     release();
   })();
 
+  expect(lock.locked).to.equal(true);
   await clock.runAllAsync();
 
   const [v1, v2, v3] = await Promise.all([r1, r2, r3]);
+  expect(lock.locked).to.equal(false);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -122,9 +126,11 @@ test('Multiple write', async () => {
     release();
   })();
 
+  expect(lock.locked).to.equal(true);
   await clock.runAllAsync();
 
   const [v1, v2, v3] = await Promise.all([w1, w2, w3]);
+  expect(lock.locked).to.equal(false);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -161,9 +167,11 @@ test('Write then read', async () => {
     release();
   })();
 
+  expect(lock.locked).to.equal(true);
   await clock.runAllAsync();
 
   const [v1, v2, v3] = await Promise.all([w1, r2, r3]);
+  expect(lock.locked).to.equal(false);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -208,9 +216,11 @@ test('Reads then writes', async () => {
     return 4;
   })();
 
+  expect(lock.locked).to.equal(true);
   await clock.runAllAsync();
 
   const [v1, v2, v3, v4] = await Promise.all([r1, r2, w3, w4]);
+  expect(lock.locked).to.equal(false);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -257,9 +267,11 @@ test('Reads then writes (withRead)', async () => {
     return 4;
   });
 
+  expect(lock.locked).to.equal(true);
   await clock.runAllAsync();
 
   const [v1, v2, v3, v4] = await Promise.all([r1, r2, w3, w4]);
+  expect(lock.locked).to.equal(false);
   expect(v1).to.equal(1);
   expect(v2).to.equal(2);
   expect(v3).to.equal(undefined);
@@ -275,4 +287,71 @@ test('Reads then writes (withRead)', async () => {
     'w4a',
     'w4b',
   ]);
+});
+
+test('RWLockMap will cleanup locks.', async () => {
+  const locks = new RWLockMap();
+
+  function runTest(key: string) {
+    // Same a test("Reads then writes (withRead)")
+    const log: string[] = [];
+    const r1: Promise<number> = locks.withRead(key, async () => {
+      log.push('r1a');
+      await sleep(8);
+      log.push('r1b');
+      return 1;
+    });
+    const r2: Promise<number> = locks.withRead(key, async () => {
+      log.push('r2a');
+      await sleep(6);
+      log.push('r2b');
+      return 2;
+    });
+    const w3: Promise<void> = locks.withWrite(key, async () => {
+      log.push('w3a');
+      await sleep(4);
+      log.push('w3b');
+    });
+    const w4: Promise<number> = locks.withWrite(key, async () => {
+      log.push('w4a');
+      await sleep(2);
+      log.push('w4b');
+      return 4;
+    });
+
+    const result = Promise.all([r1, r2, w3, w4]);
+    return {log, result};
+  }
+
+  async function assertTest(args: {log: string[]; result: Promise<any[]>}) {
+    const [v1, v2, v3, v4] = await args.result;
+    expect(v1).to.equal(1);
+    expect(v2).to.equal(2);
+    expect(v3).to.equal(undefined);
+    expect(v4).to.equal(4);
+
+    expect(args.log).to.deep.equal([
+      'r1a',
+      'r2a',
+      'r2b',
+      'r1b',
+      'w3a',
+      'w3b',
+      'w4a',
+      'w4b',
+    ]);
+  }
+
+  const test1 = runTest('key1');
+  const test2 = runTest('key2');
+
+  expect(locks['_locks'].get('key1')?.locked).to.equal(true);
+  expect(locks['_locks'].get('key2')?.locked).to.equal(true);
+  await clock.runAllAsync();
+
+  await assertTest(test1);
+  await assertTest(test2);
+
+  expect(locks['_locks'].get('key1')).to.equal(undefined);
+  expect(locks['_locks'].get('key2')).to.equal(undefined);
 });
