@@ -9,20 +9,22 @@
   },
   "scripts": {
     "test": "mocha --ui=tdd out/*.test.js",
-    "pretest": "npm run build",
+    "pretest": "pnpm run build",
     "format": "prettier --write 'src/**/*.{js,jsx,json,ts,tsx,html,css,md}' '*.{cjs,js,jsx,json,ts,tsx,html,css,md}'",
     "check-format": "prettier --check 'src/**/*.{js,jsx,json,ts,tsx,html,css,md}' '*.{cjs,js,jsx,json,ts,tsx,html,css,md}'",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src/",
     "build": "rm -rf out && tsc",
-    "prepack": "npm run lint && npm run test "
+    "prepack": "pnpm run lint && pnpm run test"
   },
   "dependencies": {
     "@rocicorp/resolver": "^1.0.2"
   },
   "devDependencies": {
+    "@sinonjs/fake-timers": "^10.3.0",
     "@types/chai": "^4.3.6",
     "@types/mocha": "^10.0.1",
     "@types/sinon": "^10.0.16",
+    "@types/sinonjs__fake-timers": "^15.0.1",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
     "chai": "^4.3.8",
@@ -33,6 +35,7 @@
     "typescript": "^5.2.2"
   },
   "type": "module",
+  "packageManager": "pnpm@11.1.2",
   "types": "out/lock.d.ts",
   "module": "./out/lock.js",
   "main": "./out/lock.js",
