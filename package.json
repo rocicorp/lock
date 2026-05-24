@@ -8,8 +8,7 @@
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "scripts": {
-    "test": "mocha --ui=tdd out/*.test.js",
-    "pretest": "pnpm run build",
+    "test": "vitest run src/",
     "format": "prettier --write 'src/**/*.{js,jsx,json,ts,tsx,html,css,md}' '*.{cjs,js,jsx,json,ts,tsx,html,css,md}'",
     "check-format": "prettier --check 'src/**/*.{js,jsx,json,ts,tsx,html,css,md}' '*.{cjs,js,jsx,json,ts,tsx,html,css,md}'",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src/",
@@ -19,19 +18,12 @@
   "dependencies": {
   },
   "devDependencies": {
-    "@sinonjs/fake-timers": "^10.3.0",
-    "@types/chai": "^4.3.6",
-    "@types/mocha": "^10.0.1",
-    "@types/sinon": "^10.0.16",
-    "@types/sinonjs__fake-timers": "^15.0.1",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
-    "chai": "^4.3.8",
     "eslint": "^8.49.0",
-    "mocha": "^10.2.0",
     "prettier": "^3.0.3",
-    "sinon": "^15.2.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^4.1.6"
   },
   "type": "module",
   "packageManager": "pnpm@11.1.2",
