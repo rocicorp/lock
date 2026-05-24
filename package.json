@@ -1,6 +1,6 @@
 {
   "name": "@rocicorp/lock",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Implements Lock and RWLock synchronization primitives.",
   "license": "Apache-2.0",
   "repository": "github:rocicorp/lock",
