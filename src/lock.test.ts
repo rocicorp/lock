@@ -1,6 +1,5 @@
-import {expect} from 'chai';
-import {SinonFakeTimers, useFakeTimers} from 'sinon';
-import {RWLock} from './lock.js';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import { RWLock } from './lock.js';
 
 /**
  * Creates a promise that resolves after [[ms]] milliseconds. Note that if you
@@ -17,13 +16,12 @@ function sleep(ms: number): Promise<void> {
   });
 }
 
-let clock: SinonFakeTimers;
-setup(() => {
-  clock = useFakeTimers(0);
+beforeEach(() => {
+  vi.useFakeTimers();
 });
 
-teardown(() => {
-  clock.restore();
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 test('Multiple reads', async () => {
@@ -51,10 +49,10 @@ test('Multiple reads', async () => {
   })();
 
   const [v1, v2, v3] = await Promise.all([r1, r2, r3]);
-  expect(v1).to.equal(1);
-  expect(v2).to.equal(2);
-  expect(v3).to.equal(undefined);
-  expect(log).to.deep.equal(['r1', 'r2', 'r3']);
+  expect(v1).toBe(1);
+  expect(v2).toBe(2);
+  expect(v3).toBe(undefined);
+  expect(log).toEqual(['r1', 'r2', 'r3']);
 });
 
 test('Multiple reads with sleep', async () => {
@@ -83,14 +81,14 @@ test('Multiple reads with sleep', async () => {
     release();
   })();
 
-  await clock.runAllAsync();
+  await vi.runAllTimersAsync();
 
   const [v1, v2, v3] = await Promise.all([r1, r2, r3]);
-  expect(v1).to.equal(1);
-  expect(v2).to.equal(2);
-  expect(v3).to.equal(undefined);
+  expect(v1).toBe(1);
+  expect(v2).toBe(2);
+  expect(v3).toBe(undefined);
 
-  expect(log).to.deep.equal(['r3', 'r2', 'r1']);
+  expect(log).toEqual(['r3', 'r2', 'r1']);
 });
 
 test('Multiple write', async () => {
@@ -122,14 +120,14 @@ test('Multiple write', async () => {
     release();
   })();
 
-  await clock.runAllAsync();
+  await vi.runAllTimersAsync();
 
   const [v1, v2, v3] = await Promise.all([w1, w2, w3]);
-  expect(v1).to.equal(1);
-  expect(v2).to.equal(2);
-  expect(v3).to.equal(undefined);
+  expect(v1).toBe(1);
+  expect(v2).toBe(2);
+  expect(v3).toBe(undefined);
 
-  expect(log).to.deep.equal(['w1a', 'w1b', 'w2a', 'w2b', 'w3a', 'w3b']);
+  expect(log).toEqual(['w1a', 'w1b', 'w2a', 'w2b', 'w3a', 'w3b']);
 });
 
 test('Write then read', async () => {
@@ -161,14 +159,14 @@ test('Write then read', async () => {
     release();
   })();
 
-  await clock.runAllAsync();
+  await vi.runAllTimersAsync();
 
   const [v1, v2, v3] = await Promise.all([w1, r2, r3]);
-  expect(v1).to.equal(1);
-  expect(v2).to.equal(2);
-  expect(v3).to.equal(undefined);
+  expect(v1).toBe(1);
+  expect(v2).toBe(2);
+  expect(v3).toBe(undefined);
 
-  expect(log).to.deep.equal(['w1a', 'w1b', 'r2a', 'r3a', 'r3b', 'r2b']);
+  expect(log).toEqual(['w1a', 'w1b', 'r2a', 'r3a', 'r3b', 'r2b']);
 });
 
 test('Reads then writes', async () => {
@@ -208,15 +206,15 @@ test('Reads then writes', async () => {
     return 4;
   })();
 
-  await clock.runAllAsync();
+  await vi.runAllTimersAsync();
 
   const [v1, v2, v3, v4] = await Promise.all([r1, r2, w3, w4]);
-  expect(v1).to.equal(1);
-  expect(v2).to.equal(2);
-  expect(v3).to.equal(undefined);
-  expect(v4).to.equal(4);
+  expect(v1).toBe(1);
+  expect(v2).toBe(2);
+  expect(v3).toBe(undefined);
+  expect(v4).toBe(4);
 
-  expect(log).to.deep.equal([
+  expect(log).toEqual([
     'r1a',
     'r2a',
     'r2b',
@@ -257,15 +255,15 @@ test('Reads then writes (withRead)', async () => {
     return 4;
   });
 
-  await clock.runAllAsync();
+  await vi.runAllTimersAsync();
 
   const [v1, v2, v3, v4] = await Promise.all([r1, r2, w3, w4]);
-  expect(v1).to.equal(1);
-  expect(v2).to.equal(2);
-  expect(v3).to.equal(undefined);
-  expect(v4).to.equal(4);
+  expect(v1).toBe(1);
+  expect(v2).toBe(2);
+  expect(v3).toBe(undefined);
+  expect(v4).toBe(4);
 
-  expect(log).to.deep.equal([
+  expect(log).toEqual([
     'r1a',
     'r2a',
     'r2b',
