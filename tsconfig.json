@@ -14,6 +14,7 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "Node16",
     "outDir": "out",
+    "rootDir": "src",
     "allowJs": true,
     // esnext for Object.fromEntries
     "lib": ["dom", "esnext"],
