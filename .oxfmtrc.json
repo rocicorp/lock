@@ -3,5 +3,8 @@
   "trailingComma": "all",
   "arrowParens": "avoid",
   "bracketSpacing": false,
-  "quoteProps": "consistent"
+  "quoteProps": "consistent",
+  "printWidth": 80,
+  "sortPackageJson": true,
+  "ignorePatterns": ["out/"]
 }

@@ -15,15 +15,13 @@ export default {
       ui: 'tdd',
       reporter: 'html',
       timeout: 30000,
-      retries: 0, 
+      retries: 0,
     },
   },
   groups: [
     {
       name: 'Main',
-      files: [
-        'src/*.test.ts',
-      ],
+      files: ['src/*.test.ts'],
       browsers: [firefox, chromium, webkit],
     },
   ],

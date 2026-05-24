@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, expect, test, vi } from 'vitest';
-import { RWLock } from './lock.js';
+import {afterEach, beforeEach, expect, test, vi} from 'vitest';
+import {RWLock} from './lock.js';
 
 /**
  * Creates a promise that resolves after [[ms]] milliseconds. Note that if you
@@ -214,16 +214,7 @@ test('Reads then writes', async () => {
   expect(v3).toBe(undefined);
   expect(v4).toBe(4);
 
-  expect(log).toEqual([
-    'r1a',
-    'r2a',
-    'r2b',
-    'r1b',
-    'w3a',
-    'w3b',
-    'w4a',
-    'w4b',
-  ]);
+  expect(log).toEqual(['r1a', 'r2a', 'r2b', 'r1b', 'w3a', 'w3b', 'w4a', 'w4b']);
 });
 
 test('Reads then writes (withRead)', async () => {
@@ -263,14 +254,5 @@ test('Reads then writes (withRead)', async () => {
   expect(v3).toBe(undefined);
   expect(v4).toBe(4);
 
-  expect(log).toEqual([
-    'r1a',
-    'r2a',
-    'r2b',
-    'r1b',
-    'w3a',
-    'w3b',
-    'w4a',
-    'w4b',
-  ]);
+  expect(log).toEqual(['r1a', 'r2a', 'r2b', 'r1b', 'w3a', 'w3b', 'w4a', 'w4b']);
 });
