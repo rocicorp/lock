@@ -1,0 +1,48 @@
+{
+  "plugins": ["typescript"],
+  "categories": {
+    "correctness": "off"
+  },
+  "options": {
+    "typeAware": true
+  },
+  "ignorePatterns": [
+    "coverage",
+    "out",
+    "tool",
+    "bin",
+    "src/wasm",
+    "*_generated.ts",
+    "src/*/generated/",
+    ".eslintrc.cjs",
+    "web-test-runner.config.mjs",
+    "rollup.config.js"
+  ],
+  "env": {
+    "builtin": true
+  },
+  "rules": {
+    "eqeqeq": "error",
+    "no-var": "error",
+    "object-shorthand": "error",
+    "prefer-arrow-callback": "error",
+    "prefer-destructuring": [
+      "error",
+      {
+        "VariableDeclarator": {
+          "object": true
+        }
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "typescript/no-floating-promises": "error"
+  }
+}

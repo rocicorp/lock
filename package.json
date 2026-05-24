@@ -20,15 +20,14 @@
     "fmt": "oxfmt",
     "format": "oxfmt",
     "check-format": "oxfmt --check",
-    "lint": "eslint --ext .ts,.tsx,.js,.jsx src/",
+    "lint": "oxlint src/",
     "build": "rm -rf out && tsc",
     "prepack": "pnpm run lint && pnpm run test"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.7.0",
-    "@typescript-eslint/parser": "^6.7.0",
-    "eslint": "^8.49.0",
     "oxfmt": "^0.51.0",
+    "oxlint": "^1.66.0",
+    "oxlint-tsgolint": "^0.23.0",
     "typescript": "^5.2.2",
     "vitest": "^4.1.6"
   },
