@@ -1,11 +1,10 @@
-import {resolver} from '@rocicorp/resolver';
 
 export class Lock {
   private _lockP: Promise<void> | null = null;
 
   async lock(): Promise<() => void> {
     const previous = this._lockP;
-    const {promise, resolve} = resolver();
+    const {promise, resolve} = Promise.withResolvers<void>();
     this._lockP = promise;
     await previous;
     return resolve;
@@ -24,7 +23,7 @@ export class RWLock {
   read(): Promise<() => void> {
     return this._lock.withLock(async () => {
       await this._writeP;
-      const {promise, resolve} = resolver();
+      const {promise, resolve} = Promise.withResolvers<void>();
       this._readP.push(promise);
       return resolve;
     });
@@ -38,7 +37,7 @@ export class RWLock {
     return await this._lock.withLock(async () => {
       await this._writeP;
       await Promise.all(this._readP);
-      const {promise, resolve} = resolver();
+      const {promise, resolve} = Promise.withResolvers<void>();
       this._writeP = promise;
       this._readP = [];
       return resolve;
