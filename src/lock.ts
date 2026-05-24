@@ -1,10 +1,10 @@
 export class Lock {
-  private _lockP: Promise<void> | null = null;
+  #lockP: Promise<void> | null = null;
 
   async lock(): Promise<() => void> {
-    const previous = this._lockP;
+    const previous = this.#lockP;
     const {promise, resolve} = Promise.withResolvers<void>();
-    this._lockP = promise;
+    this.#lockP = promise;
     await previous;
     return resolve;
   }
@@ -15,15 +15,15 @@ export class Lock {
 }
 
 export class RWLock {
-  private _lock = new Lock();
-  private _writeP: Promise<void> | null = null;
-  private _readP: Promise<void>[] = [];
+  #lock = new Lock();
+  #writeP: Promise<void> | null = null;
+  #readP: Promise<void>[] = [];
 
   read(): Promise<() => void> {
-    return this._lock.withLock(async () => {
-      await this._writeP;
+    return this.#lock.withLock(async () => {
+      await this.#writeP;
       const {promise, resolve} = Promise.withResolvers<void>();
-      this._readP.push(promise);
+      this.#readP.push(promise);
       return resolve;
     });
   }
@@ -33,12 +33,12 @@ export class RWLock {
   }
 
   async write(): Promise<() => void> {
-    return await this._lock.withLock(async () => {
-      await this._writeP;
-      await Promise.all(this._readP);
+    return await this.#lock.withLock(async () => {
+      await this.#writeP;
+      await Promise.all(this.#readP);
       const {promise, resolve} = Promise.withResolvers<void>();
-      this._writeP = promise;
-      this._readP = [];
+      this.#writeP = promise;
+      this.#readP = [];
       return resolve;
     });
   }
