@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "Node16",
+    "module": "nodenext"  ,
 
     "strict": true,
     "noUnusedLocals": true,
@@ -12,13 +12,14 @@
 
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "Node16",
+    "moduleResolution": "nodenext",
     "outDir": "out",
     "rootDir": "src",
     "allowJs": true,
-    // esnext for Object.fromEntries
+
     "lib": ["dom", "esnext"],
-    "preserveSymlinks": true
+    "preserveSymlinks": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "out/**/*", "out.cjs/**/*"]
