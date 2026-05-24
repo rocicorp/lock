@@ -1,4 +1,3 @@
-
 export class Lock {
   private _lockP: Promise<void> | null = null;
 

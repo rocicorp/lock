@@ -1,40 +1,39 @@
 {
   "name": "@rocicorp/lock",
-  "description": "Implements Lock and RWLock synchronization primitives.",
   "version": "1.0.4",
-  "repository": "github:rocicorp/lock",
+  "description": "Implements Lock and RWLock synchronization primitives.",
   "license": "Apache-2.0",
-  "engines": {
-    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  "repository": "github:rocicorp/lock",
+  "files": [
+    "out/*",
+    "!out/*.test.*"
+  ],
+  "type": "module",
+  "main": "./out/lock.js",
+  "module": "./out/lock.js",
+  "types": "out/lock.d.ts",
+  "exports": {
+    ".": "./out/lock.js"
   },
   "scripts": {
     "test": "vitest run src/",
-    "format": "prettier --write 'src/**/*.{js,jsx,json,ts,tsx,html,css,md}' '*.{cjs,js,jsx,json,ts,tsx,html,css,md}'",
-    "check-format": "prettier --check 'src/**/*.{js,jsx,json,ts,tsx,html,css,md}' '*.{cjs,js,jsx,json,ts,tsx,html,css,md}'",
+    "fmt": "oxfmt",
+    "format": "oxfmt",
+    "check-format": "oxfmt --check",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src/",
     "build": "rm -rf out && tsc",
     "prepack": "pnpm run lint && pnpm run test"
-  },
-  "dependencies": {
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
     "eslint": "^8.49.0",
-    "prettier": "^3.0.3",
+    "oxfmt": "^0.51.0",
     "typescript": "^5.2.2",
     "vitest": "^4.1.6"
   },
-  "type": "module",
-  "packageManager": "pnpm@11.1.2",
-  "types": "out/lock.d.ts",
-  "module": "./out/lock.js",
-  "main": "./out/lock.js",
-  "exports": {
-    ".": "./out/lock.js"
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
-  "files": [
-    "out/*",
-    "!out/*.test.*"
-  ]
+  "packageManager": "pnpm@11.1.2"
 }
